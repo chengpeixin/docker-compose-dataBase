@@ -1,0 +1,67 @@
+# 数据库
+version: '3.1'
+
+services:
+  mongo:
+    build: ./
+    image: mongo
+    container_name: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: abc@123
+    ports:
+      - 27017:27017
+    volumes:
+      - "/root/docker-containe/mongo:/data/db"
+    networks:
+      - local-net 
+  mongo-express:
+    image: mongo-express
+    restart: always
+    container_name: mongo_express
+    ports:
+      - 27018:8081
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: abc@123
+    networks:
+      - local-net
+  mysql:
+    image: mysql
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    container_name: mysql
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: abc@123
+    volumes:
+      - "/root/docker-containe/mysql:/var/lib/mysql"
+    networks:
+      - local-net
+  adminer:
+    image: adminer
+    restart: always
+    container_name: adminer
+    ports:
+      - 3307:8080
+    environment:
+      ADMINER_DEFAULT_SERVER: mysql
+    networks:
+      - local-net
+  redis:
+    image: redis
+    restart: always
+    container_name: redis
+    command: redis-server /usr/local/etc/redis/redis.conf
+    ports:
+      - "6379:6379"
+    volumes:
+      - "/root/docker-containe/redis/data:/data"
+      - /root/docker-containe/redis/conf:/usr/local/etc/redis
+    networks:
+      - local-net
+networks:
+  local-net:
+    external: true
